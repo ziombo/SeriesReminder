@@ -1,0 +1,84 @@
+﻿<Window x:Class="SeriesReminderWPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SeriesReminderWPF"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525" Closing="Window_Closing">
+	<Window.Resources>
+		<Style x:Key="DataGridCellStyle1" TargetType="{x:Type DataGridCell}">
+			<Setter Property="Background" Value="Transparent"/>
+			<Setter Property="BorderBrush" Value="Transparent"/>
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="{x:Type DataGridCell}">
+						<Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+							<ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+						</Border>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+			<Style.Triggers>
+				<Trigger Property="IsSelected" Value="True">
+					<Setter Property="Background" Value="#FF0068FF"/>
+					<Setter Property="Foreground" Value="White"/>
+					<Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+				</Trigger>
+				<Trigger Property="IsKeyboardFocusWithin" Value="True">
+					<Setter Property="BorderBrush" Value="{DynamicResource {x:Static DataGrid.FocusBorderBrushKey}}"/>
+				</Trigger>
+				<MultiTrigger>
+					<MultiTrigger.Conditions>
+						<Condition Property="IsSelected" Value="true"/>
+						<Condition Property="Selector.IsSelectionActive" Value="false"/>
+					</MultiTrigger.Conditions>
+					<Setter Property="Background" Value="#FF0068FF"/>
+					<Setter Property="Foreground" Value="White"/>
+					<Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.InactiveSelectionHighlightBrushKey}}"/>
+				</MultiTrigger>
+				<Trigger Property="IsEnabled" Value="false">
+					<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+				</Trigger>
+			</Style.Triggers>
+		</Style>
+	</Window.Resources>
+
+	<Grid>
+		<TextBox x:Name="txtSeries" Text="{Binding SearchedSeries,  UpdateSourceTrigger=PropertyChanged}"  HorizontalAlignment="Left" Height="23" Margin="26,49,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="305"/>
+		<Button x:Name="btn_findSeries" Content="Find Series" HorizontalAlignment="Left" Margin="336,49,0,0" VerticalAlignment="Top" Width="158" Click="btn_findSeries_Click" IsDefault="True"/>
+		<DataGrid x:Name="dgSeries"  CellStyle="{DynamicResource DataGridCellStyle1}" HorizontalAlignment="Left" Margin="26,82,0,5" Height="236" Width="468" CanUserAddRows="False" CanUserSortColumns="True" AutoGenerateColumns="False">
+
+			<DataGrid.RowStyle>
+				<Style TargetType="DataGridRow">
+					<Style.Triggers>
+						<DataTrigger Binding="{Binding Status}" Value="Running">
+							<Setter Property="Background" Value="#7F99FF99"></Setter>
+						</DataTrigger>
+						<DataTrigger Binding="{Binding DaysLeft}" Value="{x:Null}">
+							<Setter Property="Background" Value="#FFC7DDFF"></Setter>
+						</DataTrigger>
+						<DataTrigger Binding="{Binding Status}" Value="Ended">
+							<Setter Property="Background" Value="#f99"></Setter>
+						</DataTrigger>
+					</Style.Triggers>
+				</Style>
+			</DataGrid.RowStyle>
+
+			<DataGrid.Columns>
+				<DataGridTextColumn Header="Name" Width="0.30*" Binding="{Binding Name}" />
+				<DataGridTextColumn Header="Status" Width="0.30*" Binding="{Binding Status}" IsReadOnly="True" />
+				<DataGridTextColumn Header="Next Episode" Width="0.20*" Binding="{Binding NextEpisodeDate}" IsReadOnly="True"/>
+				<DataGridTextColumn Header="Days Left" Width="0.15*" Binding="{Binding DaysLeft}" IsReadOnly="True"/>
+			</DataGrid.Columns>
+			<DataGrid.Resources>
+				<SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" 
+                   Color="#FF22ABB2"/>
+			</DataGrid.Resources>
+		</DataGrid>
+		<Label x:Name="lblError" Content="{Binding LastErrorMessage}" HorizontalAlignment="Left" Margin="26,18,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.158,-0.385" Width="305"/>
+		<Button x:Name="btn_Refresh" Content="Refresh" HorizontalAlignment="Left" Margin="336,18,0,0" VerticalAlignment="Top" Width="158" Click="btn_Refresh_Click"/>
+
+	</Grid>
+</Window>
